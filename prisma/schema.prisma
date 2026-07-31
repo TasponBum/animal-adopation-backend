@@ -1,0 +1,120 @@
+// This is your Prisma schema file
+// https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ===== ENUM =====
+
+enum UserRole {
+  USER
+  ADMIN
+  SHELTER
+}
+
+enum Species {
+  DOG
+  CAT
+}
+
+enum Gender {
+  MALE
+  FEMALE
+}
+
+enum AgeUnit {
+  MONTH
+  YEAR
+}
+
+enum PetStatus {
+  AVAILABLE
+  PENDING
+  ADOPTED
+}
+
+enum RequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+// ===== USER =====
+
+model User {
+  id           String   @id @default(cuid())
+  firstName    String
+  lastName     String
+
+  email        String   @unique
+  passwordHash String
+
+  phone        String
+
+  role         UserRole @default(USER)
+
+  postedPets   Pet[]
+  requests     AdoptionRequest[]
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+// ===== PET =====
+
+model Pet {
+  id           String   @id @default(cuid())
+
+  name         String
+  species      Species
+  breed        String?
+
+  gender       Gender
+
+  ageValue     Int
+  ageUnit      AgeUnit
+
+  description  String?
+  imageUrl     String
+
+  district     String
+
+  status       PetStatus @default(AVAILABLE)
+
+  postedById   String
+  postedBy     User @relation(fields: [postedById], references: [id])
+
+  requests     AdoptionRequest[]
+
+  foundAt DateTime?
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+// ===== ADOPTION REQUEST =====
+
+model AdoptionRequest {
+  id           String   @id @default(cuid())
+
+  userId       String
+  petId        String
+
+  message      String?
+
+  status       RequestStatus @default(PENDING)
+
+  user         User @relation(fields: [userId], references: [id])
+  pet          Pet  @relation(fields: [petId], references: [id])
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@unique([userId, petId])
+}
