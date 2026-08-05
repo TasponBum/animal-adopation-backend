@@ -68,7 +68,6 @@ export default function LoginPage() {
             <label className="block text-sm text-gray-900 mb-1">อีเมล</label>
             <input
               type="email"
-              placeholder="name@example.com"
               value={form.email}
               onChange={(e) => setForm({ ...form, email: e.target.value })}
               required
@@ -80,7 +79,6 @@ export default function LoginPage() {
             <label className="block text-sm text-gray-900 mb-1">รหัสผ่าน</label>
             <input
               type="password"
-              placeholder="••••••••"
               value={form.password}
               onChange={(e) => setForm({ ...form, password: e.target.value })}
               required
