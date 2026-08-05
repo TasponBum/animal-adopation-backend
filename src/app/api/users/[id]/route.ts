@@ -1,6 +1,7 @@
 import { prisma } from '@/lib/prisma'
+import { requireOwnerOrAdmin } from '@/lib/auth'
 
-// GET /api/users/[id] - ดึง user รายตัว
+// GET /api/users/[id] - ดึง user รายตัว (ไม่ต้อง login ก็ดูได้ — เหมือนเดิม)
 export async function GET(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
@@ -39,18 +40,30 @@ export async function GET(
 }
 
 // PATCH /api/users/[id] - แก้ไขข้อมูล user
+// อนุญาตเฉพาะเจ้าของ account เอง หรือ ADMIN เท่านั้น
 export async function PATCH(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { id } = await params
+
+    const auth = requireOwnerOrAdmin(request, id)
+    if (auth instanceof Response) return auth
+
     const body = await request.json()
     const { firstName, lastName, phone, role } = body
 
+    // เฉพาะ ADMIN เท่านั้นที่เปลี่ยน role ของคนอื่นได้
+    // user ทั่วไปแก้ role ตัวเองไม่ได้ (กันตัวเองเลื่อนขั้นเป็น ADMIN)
+    const updateData: any = { firstName, lastName, phone }
+    if (role !== undefined && auth.role === 'ADMIN') {
+      updateData.role = role
+    }
+
     const user = await prisma.user.update({
       where: { id },
-      data: { firstName, lastName, phone, role },
+      data: updateData,
       select: {
         id: true,
         firstName: true,
@@ -79,12 +92,16 @@ export async function PATCH(
 }
 
 // DELETE /api/users/[id] - ลบ user
+// อนุญาตเฉพาะเจ้าของ account เอง หรือ ADMIN เท่านั้น
 export async function DELETE(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { id } = await params
+
+    const auth = requireOwnerOrAdmin(request, id)
+    if (auth instanceof Response) return auth
 
     await prisma.user.delete({ where: { id } })
 

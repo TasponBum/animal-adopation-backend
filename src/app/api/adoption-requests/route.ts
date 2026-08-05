@@ -1,8 +1,18 @@
 import { prisma } from '@/lib/prisma'
+import { getUserIdFromRequest } from '@/lib/auth'
 
 // GET /api/adoption-requests - ดึงคำขอรับเลี้ยงทั้งหมด (filter ได้)
 export async function GET(request: Request) {
   try {
+    // ต้อง login ก่อนถึงจะดูรายการคำขอได้ เพราะข้อมูลมี email/phone ของผู้ขอติดมาด้วย
+    const requesterId = getUserIdFromRequest(request)
+    if (!requesterId) {
+      return Response.json(
+        { status: 'error', message: 'กรุณาเข้าสู่ระบบ' },
+        { status: 401 }
+      )
+    }
+
     const { searchParams } = new URL(request.url)
     const userId = searchParams.get('userId')
     const petId = searchParams.get('petId')
@@ -51,21 +61,22 @@ export async function GET(request: Request) {
 // POST /api/adoption-requests - สร้างคำขอรับเลี้ยงใหม่
 export async function POST(request: Request) {
   try {
-    const body = await request.json()
-    const { userId, petId, message } = body
-
-    if (!userId || !petId) {
+    const userId = getUserIdFromRequest(request)
+    if (!userId) {
       return Response.json(
-        { status: 'error', message: 'กรุณาระบุ userId และ petId' },
-        { status: 400 }
+        { status: 'error', message: 'กรุณาเข้าสู่ระบบก่อนส่งคำขอรับเลี้ยง' },
+        { status: 401 }
       )
     }
 
-    const userExists = await prisma.user.findUnique({ where: { id: userId } })
-    if (!userExists) {
+    const body = await request.json()
+    const { petId, message } = body
+    // หมายเหตุ: ไม่รับ userId จาก body อีกต่อไป — ดึงจาก token ที่ verify แล้วเท่านั้น
+
+    if (!petId) {
       return Response.json(
-        { status: 'error', message: 'ไม่พบผู้ใช้นี้' },
-        { status: 404 }
+        { status: 'error', message: 'กรุณาระบุ petId' },
+        { status: 400 }
       )
     }
 
@@ -80,6 +91,13 @@ export async function POST(request: Request) {
     if (pet.status !== 'AVAILABLE') {
       return Response.json(
         { status: 'error', message: 'สัตว์เลี้ยงนี้ไม่พร้อมให้รับเลี้ยงแล้ว' },
+        { status: 400 }
+      )
+    }
+
+    if (pet.postedById === userId) {
+      return Response.json(
+        { status: 'error', message: 'ไม่สามารถส่งคำขอรับเลี้ยงสัตว์ที่ตัวเองลงประกาศได้' },
         { status: 400 }
       )
     }

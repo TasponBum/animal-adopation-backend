@@ -1,6 +1,7 @@
 import { prisma } from '@/lib/prisma'
+import { getAuthFromRequest, unauthorizedResponse, forbiddenResponse } from '@/lib/auth'
 
-// GET /api/adoption-requests/[id] - ดึงคำขอรายตัว
+// GET /api/adoption-requests/[id] — ไม่ต้องแก้
 export async function GET(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
@@ -51,11 +52,15 @@ export async function GET(
 }
 
 // PATCH /api/adoption-requests/[id] - อัปเดตสถานะคำขอ (approve/reject)
+// อนุญาต: เจ้าของประกาศ (pet.postedById) หรือ ADMIN
 export async function PATCH(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const auth = getAuthFromRequest(request)
+    if (!auth) return unauthorizedResponse()
+
     const { id } = await params
     const body = await request.json()
     const { status, message } = body
@@ -75,6 +80,7 @@ export async function PATCH(
 
     const existingRequest = await prisma.adoptionRequest.findUnique({
       where: { id },
+      include: { pet: { select: { postedById: true } } },
     })
 
     if (!existingRequest) {
@@ -82,6 +88,13 @@ export async function PATCH(
         { status: 'error', message: 'ไม่พบคำขอนี้' },
         { status: 404 }
       )
+    }
+
+    // อนุญาตเฉพาะเจ้าของประกาศ หรือ ADMIN เท่านั้น
+    const isOwner = existingRequest.pet.postedById === auth.userId
+    const isAdmin = auth.role === 'ADMIN'
+    if (!isOwner && !isAdmin) {
+      return forbiddenResponse('คุณไม่มีสิทธิ์จัดการคำขอนี้')
     }
 
     const updateData: any = {}
@@ -142,7 +155,7 @@ export async function PATCH(
   }
 }
 
-// DELETE /api/adoption-requests/[id] - ลบคำขอ (ยกเลิกคำขอ)
+// DELETE — ไม่ต้องแก้
 export async function DELETE(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
