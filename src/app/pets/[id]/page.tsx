@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import Navbar from '../../components/Navbar'
+import Navbar from '@/app/components/Navbar'
 
 type Pet = {
   id: string
@@ -110,10 +110,13 @@ export default function PetDetailPage({
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center text-gray-400">
-          <div className="text-4xl mb-3">🐾</div>
-          <p className="text-sm">กำลังโหลด...</p>
+      <div className="min-h-screen bg-gray-50">
+        <Navbar />
+        <div className="flex items-center justify-center py-32">
+          <div className="text-center text-gray-400">
+            <div className="text-4xl mb-3">🐾</div>
+            <p className="text-sm">กำลังโหลด...</p>
+          </div>
         </div>
       </div>
     )
@@ -122,6 +125,7 @@ export default function PetDetailPage({
   if (!pet) return null
 
   const status = statusMap[pet.status]
+  const isOwner = !!user && pet.postedBy.id === user.id
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -132,30 +136,23 @@ export default function PetDetailPage({
         <Link href="/pets" className="text-sm text-[#185FA5] hover:underline flex items-center gap-1 mb-6">
           ← กลับไปรายการสัตว์
         </Link>
-        
-        
-        
-        {/* Image */}
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div className={`rounded-2xl h-80 flex items-center justify-center text-8xl overflow-hidden ${
-  pet.species === 'DOG' ? 'bg-[#E6F1FB]' : 'bg-[#E1F5EE]'
-}`}>
-  {pet.imageUrl ? (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img
-      src={pet.imageUrl}
-      alt={pet.name}
-      className="w-full h-full object-cover"
-      onError={(e) => {
-        e.currentTarget.style.display = 'none'
-        e.currentTarget.nextElementSibling?.classList.remove('hidden')
-      }}
-    />
-  ) : null}
-  <span className={pet.imageUrl ? 'hidden' : ''}>
-    {pet.species === 'DOG' ? '🐶' : '🐱'}
-  </span>
-</div>
+          {/* Image */}
+          <div
+            className={`rounded-2xl h-80 flex items-center justify-center text-8xl overflow-hidden ${
+              pet.species === 'DOG' ? 'bg-[#E6F1FB]' : 'bg-[#E1F5EE]'
+            }`}
+          >
+            {pet.imageUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={pet.imageUrl} alt={pet.name} className="w-full h-full object-cover" />
+            ) : pet.species === 'DOG' ? (
+              '🐶'
+            ) : (
+              '🐱'
+            )}
+          </div>
 
           {/* Info */}
           <div>
@@ -165,6 +162,16 @@ export default function PetDetailPage({
                 {status.label}
               </span>
             </div>
+
+            {/* ปุ่มแก้ไข: แสดงเฉพาะเจ้าของโพสต์ */}
+            {isOwner && (
+              <Link
+                href={`/pets/${pet.id}/edit`}
+                className="inline-block text-sm text-[#185FA5] border border-[#185FA5] px-3 py-1 rounded-lg hover:bg-[#E6F1FB] transition-colors mb-4"
+              >
+                ✏️ แก้ไขโพสต์
+              </Link>
+            )}
 
             <div className="space-y-2 mb-6">
               <p className="text-gray-600 text-sm">
@@ -202,8 +209,8 @@ export default function PetDetailPage({
               </div>
             )}
 
-            {/* Adoption Request */}
-            {pet.status === 'AVAILABLE' && (
+            {/* Adoption Request: เจ้าของโพสต์ไม่ต้องขอรับเลี้ยงสัตว์ของตัวเอง */}
+            {pet.status === 'AVAILABLE' && !isOwner && (
               <div>
                 {requestSuccess ? (
                   <div className="bg-green-50 border border-green-100 text-green-700 text-sm rounded-xl px-4 py-3">
@@ -228,7 +235,11 @@ export default function PetDetailPage({
                       disabled={requesting}
                       className="w-full bg-[#185FA5] text-white py-3 rounded-xl text-sm font-medium hover:bg-[#0C447C] transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
                     >
-                      {requesting ? 'กำลังส่งคำขอ...' : user ? '🐾 ขอรับเลี้ยงน้อง' : 'เข้าสู่ระบบเพื่อขอรับเลี้ยง'}
+                      {requesting
+                        ? 'กำลังส่งคำขอ...'
+                        : user
+                        ? '🐾 ขอรับเลี้ยงน้อง'
+                        : 'เข้าสู่ระบบเพื่อขอรับเลี้ยง'}
                     </button>
                   </div>
                 )}

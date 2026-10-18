@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import Navbar from '../components/Navbar'
+import Navbar from '@/app/components/Navbar'
 
 type Pet = {
   id: string
@@ -29,24 +29,16 @@ const genderMap = {
   FEMALE: 'เพศเมีย',
 }
 
-const PAGE_SIZE = 12
-
 export default function PetsPage() {
   const [pets, setPets] = useState<Pet[]>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
   const [species, setSpecies] = useState<'ALL' | 'DOG' | 'CAT'>('ALL')
   const [status, setStatus] = useState('ALL')
-  const [page, setPage] = useState(1)
 
   useEffect(() => {
     fetchPets()
   }, [])
-
-  // reset หน้ากลับ 1 เมื่อ filter เปลี่ยน
-  useEffect(() => {
-    setPage(1)
-  }, [search, species, status])
 
   const fetchPets = async () => {
     try {
@@ -63,15 +55,13 @@ export default function PetsPage() {
     }
   }
 
+  // Filter pets
   const filtered = pets.filter((pet) => {
     const matchSearch = pet.name.toLowerCase().includes(search.toLowerCase())
     const matchSpecies = species === 'ALL' || pet.species === species
     const matchStatus = status === 'ALL' || pet.status === status
     return matchSearch && matchSpecies && matchStatus
   })
-
-  const totalPages = Math.ceil(filtered.length / PAGE_SIZE)
-  const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -82,22 +72,22 @@ export default function PetsPage() {
         <div className="mb-6">
           <h1 className="text-2xl font-semibold text-gray-900">น้องที่รอบ้านอยู่</h1>
           <p className="text-gray-500 text-sm mt-1">
-            {loading
-              ? 'กำลังโหลด...'
-              : `พบ ${filtered.length} น้อง${totalPages > 1 ? ` (หน้า ${page}/${totalPages})` : ''}`}
+            {loading ? 'กำลังโหลด...' : `พบ ${filtered.length} น้อง`}
           </p>
         </div>
 
         {/* Filter Bar */}
         <div className="flex flex-wrap gap-3 mb-6 items-center">
+          {/* Search */}
           <input
             type="text"
             placeholder="🔍 ค้นหาชื่อน้อง..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="flex-1 min-w[200px] border border-gray-200 rounded-lg px-4 py-2 text-sm focus:outline-none focus:border-[#185FA5] focus:ring-1 focus:ring-[#185FA5]"
+            className="flex-1 min-w-[200px] border border-gray-200 rounded-lg px-4 py-2 text-sm focus:outline-none focus:border-[#185FA5] focus:ring-1 focus:ring-[#185FA5]"
           />
 
+          {/* Species Tabs */}
           <div className="flex gap-2">
             {[
               { value: 'ALL', label: 'ทั้งหมด' },
@@ -118,6 +108,7 @@ export default function PetsPage() {
             ))}
           </div>
 
+          {/* Status Filter */}
           <select
             value={status}
             onChange={(e) => setStatus(e.target.value)}
@@ -147,13 +138,14 @@ export default function PetsPage() {
         )}
 
         {/* Pet Grid */}
-        {!loading && paginated.length > 0 && (
+        {!loading && filtered.length > 0 && (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
-            {paginated.map((pet) => (
+            {filtered.map((pet) => (
               <Link href={`/pets/${pet.id}`} key={pet.id}>
                 <div className="bg-white border border-gray-100 rounded-2xl overflow-hidden hover:shadow-md hover:border-[#B5D4F4] transition-all cursor-pointer">
+                  {/* Image */}
                   <div
-                    className={`h-44 flex items-center justify-center overflow-hidden ${
+                    className={`h-44 flex items-center justify-center text-6xl overflow-hidden ${
                       pet.species === 'DOG' ? 'bg-[#E6F1FB]' : 'bg-[#E1F5EE]'
                     }`}
                   >
@@ -163,21 +155,21 @@ export default function PetsPage() {
                         src={pet.imageUrl}
                         alt={pet.name}
                         className="w-full h-full object-cover"
-                        onError={(e) => {
-                          e.currentTarget.style.display = 'none'
-                          e.currentTarget.nextElementSibling?.classList.remove('hidden')
-                        }}
                       />
-                    ) : null}
-                    <span className={`text-6xl ${pet.imageUrl ? 'hidden' : ''}`}>
-                      {pet.species === 'DOG' ? '🐶' : '🐱'}
-                    </span>
+                    ) : pet.species === 'DOG' ? (
+                      '🐶'
+                    ) : (
+                      '🐱'
+                    )}
                   </div>
 
+                  {/* Body */}
                   <div className="p-4">
                     <div className="flex items-start justify-between gap-2 mb-1">
                       <h3 className="font-medium text-gray-900">{pet.name}</h3>
-                      <span className={`text-xs px-2 py-0.5 rounded-full shrink-0 ${statusMap[pet.status].className}`}>
+                      <span
+                        className={`text-xs px-2 py-0.5 rounded-full shrink-0 ${statusMap[pet.status].className}`}
+                      >
                         {statusMap[pet.status].label}
                       </span>
                     </div>
@@ -194,54 +186,6 @@ export default function PetsPage() {
                 </div>
               </Link>
             ))}
-          </div>
-        )}
-
-        {/* Pagination */}
-        {!loading && totalPages > 1 && (
-          <div className="flex items-center justify-center gap-2 mt-10">
-            <button
-              onClick={() => setPage((p) => Math.max(1, p - 1))}
-              disabled={page === 1}
-              className="px-4 py-2 text-sm rounded-lg border border-gray-200 text-gray-500 hover:border-[#185FA5] hover:text-[#185FA5] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-            >
-              ← ก่อนหน้า
-            </button>
-
-            {Array.from({ length: totalPages }, (_, i) => i + 1)
-              .filter((p) => p === 1 || p === totalPages || Math.abs(p - page) <= 1)
-              .reduce<(number | 'ellipsis')[]>((acc, p, idx, arr) => {
-                if (idx > 0 && p - (arr[idx - 1] as number) > 1) acc.push('ellipsis')
-                acc.push(p)
-                return acc
-              }, [])
-              .map((p, idx) =>
-                p === 'ellipsis' ? (
-                  <span key={`ellipsis-${idx}`} className="px-2 text-gray-400 text-sm">
-                    ...
-                  </span>
-                ) : (
-                  <button
-                    key={p}
-                    onClick={() => setPage(p as number)}
-                    className={`w-9 h-9 text-sm rounded-lg border transition-colors ${
-                      page === p
-                        ? 'bg-[#185FA5] text-white border-[#185FA5]'
-                        : 'border-gray-200 text-gray-500 hover:border-[#185FA5] hover:text-[#185FA5]'
-                    }`}
-                  >
-                    {p}
-                  </button>
-                )
-              )}
-
-            <button
-              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-              disabled={page === totalPages}
-              className="px-4 py-2 text-sm rounded-lg border border-gray-200 text-gray-500 hover:border-[#185FA5] hover:text-[#185FA5] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-            >
-              ถัดไป →
-            </button>
           </div>
         )}
       </div>
