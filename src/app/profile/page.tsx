@@ -61,7 +61,6 @@ type IncomingRequest = {
   }
 }
 
-
 const requestStatusMap = {
   PENDING: { label: 'รอพิจารณา', className: 'bg-[#FAEEDA] text-[#633806]' },
   APPROVED: { label: 'ได้รับอนุมัติ', className: 'bg-green-50 text-green-700' },
@@ -74,6 +73,13 @@ const petStatusMap = {
   ADOPTED: { label: 'มีเจ้าของแล้ว', className: 'bg-gray-100 text-gray-500' },
 }
 
+const tabClass = (active: boolean) =>
+  `px-4 py-2 rounded-full text-sm border transition-colors ${
+    active
+      ? 'bg-[#185FA5] text-white border-[#185FA5]'
+      : 'bg-white text-gray-500 border-gray-200 hover:border-[#185FA5] hover:text-[#185FA5]'
+  }`
+
 export default function ProfilePage() {
   const router = useRouter()
   const [user, setUser] = useState<User | null>(null)
@@ -84,6 +90,7 @@ export default function ProfilePage() {
 
   const [myPets, setMyPets] = useState<Pet[]>([])
   const [loadingPets, setLoadingPets] = useState(true)
+
   const [incomingRequests, setIncomingRequests] = useState<IncomingRequest[]>([])
   const [loadingIncoming, setLoadingIncoming] = useState(true)
   const [actingId, setActingId] = useState<string | null>(null)
@@ -111,7 +118,7 @@ export default function ProfilePage() {
     })
 
     fetchRequests(parsedUser.id, token)
-    fetchMyPets(parsedUser.id,token)
+    fetchMyPets(parsedUser.id, token)
   }, [])
 
   const fetchRequests = async (userId: string, token: string) => {
@@ -131,82 +138,100 @@ export default function ProfilePage() {
 
   // GET /api/pets ยังไม่รองรับ filter ด้วย postedById โดยตรง
   // เลยดึงทั้งหมดมา filter ฝั่ง client ไปก่อน
-const fetchMyPets = async (userId: string, token: string) => {
-  try {
-    setLoadingPets(true)
-    const res = await fetch('/api/pets')
-    const data = await res.json()
-    if (data.status === 'success') {
-      const mine = data.data.filter((p: Pet) => p.postedBy.id === userId)
-      setMyPets(mine)
-      fetchIncomingRequests(mine.map((p: Pet) => p.id), token)
+  const fetchMyPets = async (userId: string, token: string) => {
+    try {
+      setLoadingPets(true)
+      const res = await fetch('/api/pets')
+      const data = await res.json()
+      if (data.status === 'success') {
+        const mine = data.data.filter((p: Pet) => p.postedBy.id === userId)
+        setMyPets(mine)
+        fetchIncomingRequests(
+          mine.map((p: Pet) => p.id),
+          token
+        )
+      }
+    } catch (err) {
+      console.error('Error fetching my pets:', err)
+    } finally {
+      setLoadingPets(false)
     }
-  } catch (err) {
-    console.error('Error fetching my pets:', err)
-  } finally {
-    setLoadingPets(false)
   }
-}
 
-// ดึงคำขอทั้งหมดแล้ว filter เฉพาะที่เป็นสัตว์ของเรา
-// (GET /api/adoption-requests ยังไม่รองรับ filter ด้วย postedById โดยตรง)
-const fetchIncomingRequests = async (myPetIds: string[], token: string) => {
-  try {
-    setLoadingIncoming(true)
-    const res = await fetch('/api/adoption-requests', {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-    const data = await res.json()
-    if (data.status === 'success') {
-      const mine = data.data.filter((r: IncomingRequest) =>
-        myPetIds.includes(r.pet.id)
+  // ดึงคำขอทั้งหมดแล้ว filter เฉพาะที่เป็นสัตว์ของเรา
+  // (GET /api/adoption-requests ยังไม่รองรับ filter ด้วย postedById โดยตรง)
+  const fetchIncomingRequests = async (myPetIds: string[], token: string) => {
+    try {
+      setLoadingIncoming(true)
+      const res = await fetch('/api/adoption-requests', {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      const data = await res.json()
+      if (data.status === 'success') {
+        const mine = data.data.filter((r: IncomingRequest) =>
+          myPetIds.includes(r.pet.id)
+        )
+        setIncomingRequests(mine)
+      }
+    } catch (err) {
+      console.error('Error fetching incoming requests:', err)
+    } finally {
+      setLoadingIncoming(false)
+    }
+  }
+
+  const handleDecision = async (
+    requestId: string,
+    newStatus: 'APPROVED' | 'REJECTED'
+  ) => {
+    setActingId(requestId)
+    try {
+      const token = localStorage.getItem('token')
+      const res = await fetch(`/api/adoption-requests/${requestId}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ status: newStatus }),
+      })
+
+      const data = await res.json()
+
+      if (!res.ok) {
+        alert(data.message || 'เกิดข้อผิดพลาด')
+        return
+      }
+
+      // อัปเดต state ในหน้าโดยไม่ต้อง refetch ทั้งหมด
+      setIncomingRequests((prev) =>
+        prev.map((r) => (r.id === requestId ? { ...r, status: newStatus } : r))
       )
-      setIncomingRequests(mine)
+
+      // อัปเดตสถานะสัตว์ในแท็บ "สัตว์ที่ลงประกาศ" ตามที่ backend เปลี่ยน
+      const target = incomingRequests.find((r) => r.id === requestId)
+      if (target) {
+        const newPetStatus = newStatus === 'APPROVED' ? 'ADOPTED' : 'AVAILABLE'
+        setMyPets((prev) =>
+          prev.map((p) =>
+            p.id === target.pet.id ? { ...p, status: newPetStatus } : p
+          )
+        )
+      }
+
+      // ถ้า approve แล้ว คำขออื่นของ pet เดียวกันจะถูก backend เปลี่ยนเป็น REJECTED อัตโนมัติ
+      if (newStatus === 'APPROVED' && token) {
+        fetchIncomingRequests(
+          myPets.map((p) => p.id),
+          token
+        )
+      }
+    } catch {
+      alert('เกิดข้อผิดพลาด กรุณาลองใหม่')
+    } finally {
+      setActingId(null)
     }
-  } catch (err) {
-    console.error('Error fetching incoming requests:', err)
-  } finally {
-    setLoadingIncoming(false)
   }
-}
-
-const handleDecision = async (requestId: string, newStatus: 'APPROVED' | 'REJECTED') => {
-  setActingId(requestId)
-  try {
-    const token = localStorage.getItem('token')
-    const res = await fetch(`/api/adoption-requests/${requestId}`, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ status: newStatus }),
-    })
-
-    const data = await res.json()
-
-    if (!res.ok) {
-      alert(data.message || 'เกิดข้อผิดพลาด')
-      return
-    }
-
-    // อัปเดต state ในหน้าโดยไม่ต้อง refetch ทั้งหมด
-    setIncomingRequests((prev) =>
-      prev.map((r) => (r.id === requestId ? { ...r, status: newStatus } : r))
-    )
-
-    // ถ้า approve แล้ว คำขออื่นของ pet เดียวกันจะถูก backend เปลี่ยนเป็น REJECTED อัตโนมัติ
-    if (newStatus === 'APPROVED' && user) {
-      const token2 = localStorage.getItem('token')
-      if (token2) fetchIncomingRequests(myPets.map((p) => p.id), token2)
-    }
-  } catch {
-    alert('เกิดข้อผิดพลาด กรุณาลองใหม่')
-  } finally {
-    setActingId(null)
-  }
-}
-
 
   const handleSaveProfile = async () => {
     if (!user) return
@@ -243,6 +268,10 @@ const handleDecision = async (requestId: string, newStatus: 'APPROVED' | 'REJECT
   }
 
   if (!user) return null
+
+  const pendingIncomingCount = incomingRequests.filter(
+    (r) => r.status === 'PENDING'
+  ).length
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -283,7 +312,9 @@ const handleDecision = async (requestId: string, newStatus: 'APPROVED' | 'REJECT
                   <input
                     type="text"
                     value={editForm.firstName}
-                    onChange={(e) => setEditForm({ ...editForm, firstName: e.target.value })}
+                    onChange={(e) =>
+                      setEditForm({ ...editForm, firstName: e.target.value })
+                    }
                     className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#185FA5] focus:ring-1 focus:ring-[#185FA5]"
                   />
                 </div>
@@ -292,7 +323,9 @@ const handleDecision = async (requestId: string, newStatus: 'APPROVED' | 'REJECT
                   <input
                     type="text"
                     value={editForm.lastName}
-                    onChange={(e) => setEditForm({ ...editForm, lastName: e.target.value })}
+                    onChange={(e) =>
+                      setEditForm({ ...editForm, lastName: e.target.value })
+                    }
                     className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#185FA5] focus:ring-1 focus:ring-[#185FA5]"
                   />
                 </div>
@@ -333,42 +366,24 @@ const handleDecision = async (requestId: string, newStatus: 'APPROVED' | 'REJECT
           )}
         </div>
 
-        {/* Tabs */}
-        <div className="flex gap-2 mb-6">
+        {/* Tabs (ทั้ง 3 ปุ่มอยู่ใน div เดียวกัน) */}
+        <div className="flex flex-wrap gap-2 mb-6">
           <button
             onClick={() => setTab('requests')}
-            className={`px-4 py-2 rounded-full text-sm border transition-colors ${
-              tab === 'requests'
-                ? 'bg-[#185FA5] text-white border-[#185FA5]'
-                : 'bg-white text-gray-500 border-gray-200 hover:border-[#185FA5] hover:text-[#185FA5]'
-            }`}
+            className={tabClass(tab === 'requests')}
           >
             คำขอที่ส่งไป ({requests.length})
           </button>
-          <button
-            onClick={() => setTab('posted')}
-            className={`px-4 py-2 rounded-full text-sm border transition-colors ${
-              tab === 'posted'
-                ? 'bg-[#185FA5] text-white border-[#185FA5]'
-                : 'bg-white text-gray-500 border-gray-200 hover:border-[#185FA5] hover:text-[#185FA5]'
-            }`}
-          >
+          <button onClick={() => setTab('posted')} className={tabClass(tab === 'posted')}>
             สัตว์ที่ลงประกาศ ({myPets.length})
           </button>
-        </div>
-          
-            {/*ต่อจากปุ่ม "สัตว์ที่ลงประกาศ" แต่ยังอยู่ใน div เดียวกัน */}
           <button
             onClick={() => setTab('incoming')}
-            className={`px-4 py-2 rounded-full text-sm border transition-colors relative ${
-              tab === 'incoming'
-                ? 'bg-[#185FA5] text-white border-[#185FA5]'
-                : 'bg-white text-gray-500 border-gray-200 hover:border-[#185FA5] hover:text-[#185FA5]'
-            }`}
+            className={tabClass(tab === 'incoming')}
           >
-            คำขอที่ได้รับ ({incomingRequests.filter((r) => r.status === 'PENDING').length})
+            คำขอที่ได้รับ ({pendingIncomingCount})
           </button>
-
+        </div>
 
         {/* Requests Tab */}
         {tab === 'requests' && (
@@ -384,15 +399,14 @@ const handleDecision = async (requestId: string, newStatus: 'APPROVED' | 'REJECT
               <div className="text-center py-16 text-gray-400">
                 <div className="text-4xl mb-3">📭</div>
                 <p className="text-sm">ยังไม่มีคำขอรับเลี้ยงที่ส่งไป</p>
-                <Link href="/pets" className="text-sm text-[#185FA5] hover:underline mt-2 inline-block">
+                <Link
+                  href="/pets"
+                  className="text-sm text-[#185FA5] hover:underline mt-2 inline-block"
+                >
                   ไปดูน้องที่รอบ้านอยู่
                 </Link>
               </div>
             )}
-
-            
-
-
 
             {!loadingRequests &&
               requests.map((req) => {
@@ -418,7 +432,9 @@ const handleDecision = async (requestId: string, newStatus: 'APPROVED' | 'REJECT
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-1">
                           <h3 className="font-medium text-gray-900">{req.pet.name}</h3>
-                          <span className={`text-xs px-2 py-0.5 rounded-full shrink-0 ${s.className}`}>
+                          <span
+                            className={`text-xs px-2 py-0.5 rounded-full shrink-0 ${s.className}`}
+                          >
                             {s.label}
                           </span>
                         </div>
@@ -450,7 +466,10 @@ const handleDecision = async (requestId: string, newStatus: 'APPROVED' | 'REJECT
               <div className="text-center py-16 text-gray-400">
                 <div className="text-4xl mb-3">📋</div>
                 <p className="text-sm">ยังไม่มีสัตว์ที่ลงประกาศ</p>
-                <Link href="/pets/new" className="text-sm text-[#185FA5] hover:underline mt-2 inline-block">
+                <Link
+                  href="/pets/new"
+                  className="text-sm text-[#185FA5] hover:underline mt-2 inline-block"
+                >
                   ลงประกาศสัตว์ตัวแรก
                 </Link>
               </div>
@@ -460,8 +479,15 @@ const handleDecision = async (requestId: string, newStatus: 'APPROVED' | 'REJECT
               myPets.map((pet) => {
                 const s = petStatusMap[pet.status]
                 return (
-                  <Link href={`/pets/${pet.id}`} key={pet.id}>
-                    <div className="bg-white border border-gray-100 rounded-xl p-4 flex items-center gap-4 hover:border-[#B5D4F4] hover:shadow-sm transition-all">
+                  <div
+                    key={pet.id}
+                    className="bg-white border border-gray-100 rounded-xl p-4 flex items-center gap-4 hover:border-[#B5D4F4] hover:shadow-sm transition-all"
+                  >
+                    {/* ส่วนข้อมูล: คลิกไปหน้ารายละเอียด */}
+                    <Link
+                      href={`/pets/${pet.id}`}
+                      className="flex items-center gap-4 flex-1 min-w-0"
+                    >
                       <div className="w-16 h-16 rounded-lg bg-[#E6F1FB] flex items-center justify-center text-3xl overflow-hidden shrink-0">
                         {pet.imageUrl ? (
                           // eslint-disable-next-line @next/next/no-img-element
@@ -480,14 +506,123 @@ const handleDecision = async (requestId: string, newStatus: 'APPROVED' | 'REJECT
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-1">
                           <h3 className="font-medium text-gray-900">{pet.name}</h3>
-                          <span className={`text-xs px-2 py-0.5 rounded-full shrink-0 ${s.className}`}>
+                          <span
+                            className={`text-xs px-2 py-0.5 rounded-full shrink-0 ${s.className}`}
+                          >
                             {s.label}
                           </span>
                         </div>
                         <p className="text-xs text-gray-400">📍 {pet.district}</p>
                       </div>
+                    </Link>
+
+                    {/* ปุ่มแก้ไขโพสต์ */}
+                    <Link
+                      href={`/pets/${pet.id}/edit`}
+                      className="text-sm text-[#185FA5] border border-[#185FA5] px-3 py-1.5 rounded-lg hover:bg-[#E6F1FB] transition-colors shrink-0"
+                    >
+                      ✏️ แก้ไข
+                    </Link>
+                  </div>
+                )
+              })}
+          </div>
+        )}
+
+        {/* Incoming Requests Tab */}
+        {tab === 'incoming' && (
+          <div className="space-y-3">
+            {loadingIncoming && (
+              <div className="text-center py-16 text-gray-400">
+                <div className="text-4xl mb-3">🐾</div>
+                <p className="text-sm">กำลังโหลด...</p>
+              </div>
+            )}
+
+            {!loadingIncoming && incomingRequests.length === 0 && (
+              <div className="text-center py-16 text-gray-400">
+                <div className="text-4xl mb-3">📭</div>
+                <p className="text-sm">ยังไม่มีคำขอรับเลี้ยงที่ส่งมาถึงคุณ</p>
+              </div>
+            )}
+
+            {!loadingIncoming &&
+              incomingRequests.map((req) => {
+                const s = requestStatusMap[req.status]
+                const busy = actingId === req.id
+                return (
+                  <div
+                    key={req.id}
+                    className="bg-white border border-gray-100 rounded-xl p-4"
+                  >
+                    <div className="flex items-start gap-4">
+                      <Link
+                        href={`/pets/${req.pet.id}`}
+                        className="w-16 h-16 rounded-lg bg-[#E6F1FB] flex items-center justify-center text-3xl overflow-hidden shrink-0"
+                      >
+                        {req.pet.imageUrl ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img
+                            src={req.pet.imageUrl}
+                            alt={req.pet.name}
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              e.currentTarget.style.display = 'none'
+                            }}
+                          />
+                        ) : (
+                          <span>{req.pet.species === 'DOG' ? '🐶' : '🐱'}</span>
+                        )}
+                      </Link>
+
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-1">
+                          <h3 className="font-medium text-gray-900">{req.pet.name}</h3>
+                          <span
+                            className={`text-xs px-2 py-0.5 rounded-full shrink-0 ${s.className}`}
+                          >
+                            {s.label}
+                          </span>
+                        </div>
+                        <p className="text-sm text-gray-700">
+                          ผู้ขอ: {req.user.firstName} {req.user.lastName}
+                        </p>
+                        {req.message && (
+                          <p className="text-sm text-gray-500 mt-1">{req.message}</p>
+                        )}
+                        <p className="text-xs text-gray-400 mt-1">
+                          ส่งเมื่อ {new Date(req.createdAt).toLocaleDateString('th-TH')}
+                        </p>
+                      </div>
                     </div>
-                  </Link>
+
+                    {req.status === 'PENDING' && (
+                      <div className="flex justify-end gap-2 mt-3">
+                        <button
+                          onClick={() => handleDecision(req.id, 'REJECTED')}
+                          disabled={busy}
+                          className="px-4 py-2 rounded-lg text-sm border border-red-200 text-red-600 hover:bg-red-50 transition-colors disabled:opacity-60"
+                        >
+                          {busy ? 'กำลังดำเนินการ...' : 'ปฏิเสธ'}
+                        </button>
+                        <button
+                          onClick={() => {
+                            if (
+                              confirm(
+                                'อนุมัติคำขอนี้? คำขออื่นของน้องตัวนี้จะถูกปฏิเสธอัตโนมัติ'
+                              )
+                            ) {
+                              handleDecision(req.id, 'APPROVED')
+                            }
+                          }}
+                          disabled={busy}
+                          className="px-4 py-2 rounded-lg text-sm bg-[#185FA5] text-white hover:bg-[#0C447C] transition-colors disabled:opacity-60"
+                        >
+                          อนุมัติ
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 )
               })}
           </div>
