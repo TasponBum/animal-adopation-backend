@@ -238,7 +238,7 @@ export default function PetDetailPage({
                       value={message}
                       onChange={(e) => setMessage(e.target.value)}
                       rows={3}
-                      className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#185FA5] focus:ring-1 focus:ring-[#185FA5] resize-none"
+                      className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#185FA5] focus:ring-1 focus:ring-[#185FA5] resize-none bg-white text-black placeholder:text-black placeholder:opacity-100"
                     />
                     <button
                       onClick={handleRequest}

@@ -315,7 +315,7 @@ export default function ProfilePage() {
                     onChange={(e) =>
                       setEditForm({ ...editForm, firstName: e.target.value })
                     }
-                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#185FA5] focus:ring-1 focus:ring-[#185FA5]"
+                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#185FA5] focus:ring-1 focus:ring-[#185FA5] bg-white text-black placeholder:text-black placeholder:opacity-100"
                   />
                 </div>
                 <div>
@@ -326,7 +326,7 @@ export default function ProfilePage() {
                     onChange={(e) =>
                       setEditForm({ ...editForm, lastName: e.target.value })
                     }
-                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#185FA5] focus:ring-1 focus:ring-[#185FA5]"
+                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#185FA5] focus:ring-1 focus:ring-[#185FA5] bg-white text-black placeholder:text-black placeholder:opacity-100"
                   />
                 </div>
               </div>
@@ -336,7 +336,7 @@ export default function ProfilePage() {
                   type="tel"
                   value={editForm.phone}
                   onChange={(e) => setEditForm({ ...editForm, phone: e.target.value })}
-                  className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#185FA5] focus:ring-1 focus:ring-[#185FA5]"
+                  className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#185FA5] focus:ring-1 focus:ring-[#185FA5] bg-white text-black placeholder:text-black placeholder:opacity-100"
                 />
               </div>
               <div className="flex gap-2 pt-1">

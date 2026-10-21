@@ -86,7 +86,7 @@ export default function PetsPage() {
             placeholder="🔍 ค้นหาชื่อน้อง..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="flex-1 min-w-[200px] border border-gray-200 rounded-lg px-4 py-2 text-sm focus:outline-none focus:border-[#185FA5] focus:ring-1 focus:ring-[#185FA5]"
+            className="flex-1 min-w-[200px] border border-gray-200 rounded-lg px-4 py-2 text-sm text-black placeholder:text-black focus:outline-none focus:border-[#185FA5] focus:ring-1 focus:ring-[#185FA5] bg-white"
           />
 
           {/* Species Tabs */}
@@ -114,7 +114,7 @@ export default function PetsPage() {
           <select
             value={status}
             onChange={(e) => setStatus(e.target.value)}
-            className="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#185FA5] bg-white"
+            className="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#185FA5] bg-white text-black"
           >
             <option value="ALL">ทุกสถานะ</option>
             <option value="AVAILABLE">พร้อมรับเลี้ยง</option>

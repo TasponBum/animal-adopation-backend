@@ -20,7 +20,7 @@ type PetForm = {
 }
 
 const inputClass =
-  'w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-[#185FA5] focus:ring-1 focus:ring-[#185FA5]'
+  'w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-[#185FA5] focus:ring-1 focus:ring-[#185FA5] bg-white text-black placeholder:text-black placeholder:opacity-100'
 
 export default function EditPetPage({
   params,

@@ -154,7 +154,7 @@ export default function NewPetPage() {
               onChange={handleChange}
               placeholder="เช่น โบโบ้"
               required
-              className="w-full border border-gray-200 text-gray-900 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-[#185FA5] focus:ring-1 focus:ring-[#185FA5]"
+              className="w-full border border-gray-200 text-black placeholder:text-black placeholder:opacity-100 bg-white rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-[#185FA5] focus:ring-1 focus:ring-[#185FA5]"
             />
           </div>
 
@@ -166,7 +166,7 @@ export default function NewPetPage() {
                 name="species"
                 value={form.species}
                 onChange={handleChange}
-                className="w-full border border-gray-200 text-gray-900 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-[#185FA5] bg-white"
+                className="w-full border border-gray-200 text-black bg-white rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-[#185FA5]"
               >
                 <option value="DOG">🐶 หมา</option>
                 <option value="CAT">🐱 แมว</option>
@@ -178,7 +178,7 @@ export default function NewPetPage() {
                 name="gender"
                 value={form.gender}
                 onChange={handleChange}
-                className="w-full border border-gray-200 text-gray-900 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-[#185FA5] bg-white"
+                className="w-full border border-gray-200 text-black bg-white rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-[#185FA5]"
               >
                 <option value="MALE">เพศผู้</option>
                 <option value="FEMALE">เพศเมีย</option>
@@ -195,7 +195,7 @@ export default function NewPetPage() {
               value={form.breed}
               onChange={handleChange}
               placeholder="เช่น พันธุ์ผสม, โกลเด้น"
-              className="w-full border border-gray-200 text-gray-900 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-[#185FA5] focus:ring-1 focus:ring-[#185FA5]"
+              className="w-full border border-gray-200 text-black placeholder:text-black placeholder:opacity-100 bg-white rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-[#185FA5] focus:ring-1 focus:ring-[#185FA5]"
             />
           </div>
 
@@ -211,7 +211,7 @@ export default function NewPetPage() {
                 min="1"
                 placeholder="เช่น 2"
                 required
-                className="w-full border border-gray-200 text-gray-900 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-[#185FA5] focus:ring-1 focus:ring-[#185FA5]"
+                className="w-full border border-gray-200 text-black placeholder:text-black placeholder:opacity-100 bg-white rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-[#185FA5] focus:ring-1 focus:ring-[#185FA5]"
               />
             </div>
             <div>
@@ -220,7 +220,7 @@ export default function NewPetPage() {
                 name="ageUnit"
                 value={form.ageUnit}
                 onChange={handleChange}
-                className="w-full border border-gray-200 text-gray-900 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-[#185FA5] bg-white"
+                className="w-full border border-gray-200 text-black bg-white rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-[#185FA5]"
               >
                 <option value="YEAR">ปี</option>
                 <option value="MONTH">เดือน</option>
@@ -236,7 +236,7 @@ export default function NewPetPage() {
               value={form.district}
               onChange={handleChange}
               required
-              className="w-full border border-gray-200 text-gray-900 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-[#185FA5] bg-white"
+              className="w-full border border-gray-200 text-black bg-white rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-[#185FA5]"
             >
               <option value="">เลือกเขต</option>
               {districts.map((d) => (
@@ -281,7 +281,7 @@ export default function NewPetPage() {
               onChange={handleChange}
               placeholder="https://..."
               required
-              className="w-full border border-gray-200 text-gray-900 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-[#185FA5] focus:ring-1 focus:ring-[#185FA5]"
+              className="w-full border border-gray-200 text-black placeholder:text-black placeholder:opacity-100 bg-white rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-[#185FA5] focus:ring-1 focus:ring-[#185FA5]"
             />
             <p className="text-xs text-gray-900 mt-1">
               ระบบยังไม่รองรับอัปโหลดไฟล์ ให้วางลิงก์รูปภาพจากอินเทอร์เน็ตก่อน
@@ -297,7 +297,7 @@ export default function NewPetPage() {
               onChange={handleChange}
               rows={4}
               placeholder="นิสัย, สุขภาพ, เรื่องราวของน้อง..."
-              className="w-full border border-gray-200 text-gray-900 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-[#185FA5] focus:ring-1 focus:ring-[#185FA5] resize-none"
+              className="w-full border border-gray-200 text-black placeholder:text-black placeholder:opacity-100 bg-white rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-[#185FA5] focus:ring-1 focus:ring-[#185FA5] resize-none"
             />
           </div>
 
