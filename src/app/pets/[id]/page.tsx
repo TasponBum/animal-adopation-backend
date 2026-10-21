@@ -17,6 +17,8 @@ type Pet = {
   imageUrl: string
   district: string
   status: 'AVAILABLE' | 'PENDING' | 'ADOPTED'
+  vaccinated: boolean
+  neutered: boolean
   postedBy: {
     id: string
     firstName: string
@@ -195,6 +197,14 @@ export default function PetDetailPage({
               <p className="text-gray-600 text-sm">
                 <span className="text-gray-400 w-20 inline-block">พื้นที่</span>
                 📍 {pet.district}
+              </p>
+              <p className="text-gray-600 text-sm">
+                <span className="text-gray-400 w-20 inline-block">วัคซีน</span>
+                {pet.vaccinated ? '✅ ฉีดแล้ว' : 'ยังไม่ได้ฉีด'}
+              </p>
+              <p className="text-gray-600 text-sm">
+                <span className="text-gray-400 w-20 inline-block">ทำหมัน</span>
+                {pet.neutered ? '✅ ทำแล้ว' : 'ยังไม่ได้ทำ'}
               </p>
               <p className="text-gray-600 text-sm">
                 <span className="text-gray-400 w-20 inline-block">โพสต์โดย</span>

@@ -85,6 +85,8 @@ export async function POST(request: Request) {
       description,
       imageUrl,
       district,
+      vaccinated,
+      neutered,
     } = body
     // หมายเหตุ: ไม่รับ postedById จาก body อีกต่อไป — ดึงจาก token ที่ verify แล้วเท่านั้น
     // ป้องกันไม่ให้ใครส่ง postedById ปลอมเป็น user คนอื่นตอนสร้างประกาศ
@@ -150,6 +152,8 @@ export async function POST(request: Request) {
         description,
         imageUrl,
         district,
+        vaccinated: Boolean(vaccinated),
+        neutered: Boolean(neutered),
         postedById,
       },
       include: {

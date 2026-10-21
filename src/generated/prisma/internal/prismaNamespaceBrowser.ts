@@ -99,6 +99,8 @@ export const PetScalarFieldEnum = {
   imageUrl: 'imageUrl',
   district: 'district',
   status: 'status',
+  vaccinated: 'vaccinated',
+  neutered: 'neutered',
   postedById: 'postedById',
   foundAt: 'foundAt',
   createdAt: 'createdAt',

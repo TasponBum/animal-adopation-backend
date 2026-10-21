@@ -31,6 +31,8 @@ export default function NewPetPage() {
     description: '',
     imageUrl: '',
     district: '',
+    vaccinated: false,
+    neutered: false,
   })
 
   const [submitting, setSubmitting] = useState(false)
@@ -44,6 +46,10 @@ export default function NewPetPage() {
     }
     setCheckingAuth(false)
   }, [])
+
+  const handleCheckbox = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setForm({ ...form, [e.target.name]: e.target.checked })
+  }
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -166,7 +172,7 @@ export default function NewPetPage() {
                 <option value="CAT">🐱 แมว</option>
               </select>
             </div>
-            <div>
+          <div>
               <label className="block text-sm text-gray-900 mb-1">เพศ *</label>
               <select
                 name="gender"
@@ -237,6 +243,32 @@ export default function NewPetPage() {
                 <option key={d} value={d}>{d}</option>
               ))}
             </select>
+          </div>
+          {/* สุขภาพ: วัคซีน + ทำหมัน */}
+          <div>
+            <label className="block text-sm text-gray-900 mb-2">สุขภาพ (ไม่บังคับ)</label>
+            <div className="flex flex-wrap gap-6">
+              <label className="flex items-center gap-2 text-sm text-gray-900 cursor-pointer">
+                <input
+                  type="checkbox"
+                  name="vaccinated"
+                  checked={form.vaccinated}
+                  onChange={handleCheckbox}
+                  className="w-4 h-4 accent-[#185FA5]"
+                />
+                ฉีดวัคซีนแล้ว
+              </label>
+              <label className="flex items-center gap-2 text-sm text-gray-900 cursor-pointer">
+                <input
+                  type="checkbox"
+                  name="neutered"
+                  checked={form.neutered}
+                  onChange={handleCheckbox}
+                  className="w-4 h-4 accent-[#185FA5]"
+                />
+                ทำหมันแล้ว
+              </label>
+            </div>
           </div>
 
           {/* รูปภาพ (URL ชั่วคราว) */}

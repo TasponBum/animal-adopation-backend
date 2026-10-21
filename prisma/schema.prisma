@@ -87,6 +87,9 @@ model Pet {
 
   status       PetStatus @default(AVAILABLE)
 
+  vaccinated   Boolean   @default(false)
+  neutered     Boolean   @default(false)
+
   postedById   String
   postedBy     User @relation(fields: [postedById], references: [id])
 

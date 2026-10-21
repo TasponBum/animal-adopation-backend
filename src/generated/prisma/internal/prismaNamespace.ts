@@ -707,6 +707,8 @@ export const PetScalarFieldEnum = {
   imageUrl: 'imageUrl',
   district: 'district',
   status: 'status',
+  vaccinated: 'vaccinated',
+  neutered: 'neutered',
   postedById: 'postedById',
   foundAt: 'foundAt',
   createdAt: 'createdAt',
@@ -868,6 +870,13 @@ export type EnumPetStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$Prisma
  * Reference to a field of type 'PetStatus[]'
  */
 export type ListEnumPetStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PetStatus[]'>
+    
+
+
+/**
+ * Reference to a field of type 'Boolean'
+ */
+export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
     
 
 

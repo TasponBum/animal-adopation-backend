@@ -15,6 +15,8 @@ type PetForm = {
   description: string
   imageUrl: string
   district: string
+  vaccinated: boolean
+  neutered: boolean
 }
 
 const inputClass =
@@ -74,6 +76,8 @@ export default function EditPetPage({
           description: pet.description ?? '',
           imageUrl: pet.imageUrl,
           district: pet.district,
+          vaccinated: pet.vaccinated ?? false,
+          neutered: pet.neutered ?? false,
         })
       } catch {
         router.push('/pets')
@@ -117,6 +121,8 @@ export default function EditPetPage({
           description: form.description || null,
           imageUrl: form.imageUrl,
           district: form.district,
+          vaccinated: form.vaccinated,
+          neutered: form.neutered,
         }),
       })
 
@@ -271,6 +277,31 @@ export default function EditPetPage({
                   className="mt-3 h-40 rounded-xl object-cover border border-gray-100"
                 />
               )}
+            </div>
+
+            
+            <div>
+              <label className="block text-sm text-gray-600 mb-2">สุขภาพ (ไม่บังคับ)</label>
+              <div className="flex flex-wrap gap-6">
+                <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={form.vaccinated}
+                    onChange={(e) => update('vaccinated', e.target.checked)}
+                    className="w-4 h-4 accent-[#185FA5]"
+                  />
+                  ฉีดวัคซีนแล้ว
+                </label>
+                <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={form.neutered}
+                    onChange={(e) => update('neutered', e.target.checked)}
+                    className="w-4 h-4 accent-[#185FA5]"
+                  />
+                  ทำหมันแล้ว
+                </label>
+              </div>
             </div>
 
             <div>

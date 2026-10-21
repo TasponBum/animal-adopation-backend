@@ -71,6 +71,8 @@ export async function PATCH(
       district,
       status,
       foundAt,
+      vaccinated,
+      neutered,
     } = body
 
     if (species) {
@@ -135,6 +137,8 @@ export async function PATCH(
     if (district !== undefined) updateData.district = district
     if (status !== undefined) updateData.status = status
     if (foundAt !== undefined) updateData.foundAt = foundAt ? new Date(foundAt) : null
+    if (vaccinated !== undefined) updateData.vaccinated = Boolean(vaccinated)
+    if (neutered !== undefined) updateData.neutered = Boolean(neutered)
 
     const pet = await prisma.pet.update({
       where: { id },

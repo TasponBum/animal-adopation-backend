@@ -16,6 +16,8 @@ type Pet = {
   imageUrl: string
   district: string
   status: 'AVAILABLE' | 'PENDING' | 'ADOPTED'
+  vaccinated: boolean
+  neutered: boolean
 }
 
 const statusMap = {
@@ -182,6 +184,20 @@ export default function PetsPage() {
                       {`อายุ ${pet.ageValue} ${pet.ageUnit === 'YEAR' ? 'ปี' : 'เดือน'}`}
                     </p>
                     <p className="text-xs text-gray-400 mt-2">📍 {pet.district}</p>
+                    {(pet.vaccinated || pet.neutered) && (
+                      <div className="flex flex-wrap gap-1.5 mt-2">
+                        {pet.vaccinated && (
+                          <span className="text-xs px-2 py-0.5 rounded-full bg-green-50 text-green-700">
+                            💉 ฉีดวัคซีนแล้ว
+                          </span>
+                        )}
+                        {pet.neutered && (
+                          <span className="text-xs px-2 py-0.5 rounded-full bg-green-50 text-green-700">
+                            ✂️ ทำหมันแล้ว
+                          </span>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </div>
               </Link>

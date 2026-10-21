@@ -46,6 +46,8 @@ export type PetMinAggregateOutputType = {
   imageUrl: string | null
   district: string | null
   status: $Enums.PetStatus | null
+  vaccinated: boolean | null
+  neutered: boolean | null
   postedById: string | null
   foundAt: Date | null
   createdAt: Date | null
@@ -64,6 +66,8 @@ export type PetMaxAggregateOutputType = {
   imageUrl: string | null
   district: string | null
   status: $Enums.PetStatus | null
+  vaccinated: boolean | null
+  neutered: boolean | null
   postedById: string | null
   foundAt: Date | null
   createdAt: Date | null
@@ -82,6 +86,8 @@ export type PetCountAggregateOutputType = {
   imageUrl: number
   district: number
   status: number
+  vaccinated: number
+  neutered: number
   postedById: number
   foundAt: number
   createdAt: number
@@ -110,6 +116,8 @@ export type PetMinAggregateInputType = {
   imageUrl?: true
   district?: true
   status?: true
+  vaccinated?: true
+  neutered?: true
   postedById?: true
   foundAt?: true
   createdAt?: true
@@ -128,6 +136,8 @@ export type PetMaxAggregateInputType = {
   imageUrl?: true
   district?: true
   status?: true
+  vaccinated?: true
+  neutered?: true
   postedById?: true
   foundAt?: true
   createdAt?: true
@@ -146,6 +156,8 @@ export type PetCountAggregateInputType = {
   imageUrl?: true
   district?: true
   status?: true
+  vaccinated?: true
+  neutered?: true
   postedById?: true
   foundAt?: true
   createdAt?: true
@@ -251,6 +263,8 @@ export type PetGroupByOutputType = {
   imageUrl: string
   district: string
   status: $Enums.PetStatus
+  vaccinated: boolean
+  neutered: boolean
   postedById: string
   foundAt: Date | null
   createdAt: Date
@@ -292,6 +306,8 @@ export type PetWhereInput = {
   imageUrl?: Prisma.StringFilter<"Pet"> | string
   district?: Prisma.StringFilter<"Pet"> | string
   status?: Prisma.EnumPetStatusFilter<"Pet"> | $Enums.PetStatus
+  vaccinated?: Prisma.BoolFilter<"Pet"> | boolean
+  neutered?: Prisma.BoolFilter<"Pet"> | boolean
   postedById?: Prisma.StringFilter<"Pet"> | string
   foundAt?: Prisma.DateTimeNullableFilter<"Pet"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Pet"> | Date | string
@@ -312,6 +328,8 @@ export type PetOrderByWithRelationInput = {
   imageUrl?: Prisma.SortOrder
   district?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  vaccinated?: Prisma.SortOrder
+  neutered?: Prisma.SortOrder
   postedById?: Prisma.SortOrder
   foundAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -335,6 +353,8 @@ export type PetWhereUniqueInput = Prisma.AtLeast<{
   imageUrl?: Prisma.StringFilter<"Pet"> | string
   district?: Prisma.StringFilter<"Pet"> | string
   status?: Prisma.EnumPetStatusFilter<"Pet"> | $Enums.PetStatus
+  vaccinated?: Prisma.BoolFilter<"Pet"> | boolean
+  neutered?: Prisma.BoolFilter<"Pet"> | boolean
   postedById?: Prisma.StringFilter<"Pet"> | string
   foundAt?: Prisma.DateTimeNullableFilter<"Pet"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Pet"> | Date | string
@@ -355,6 +375,8 @@ export type PetOrderByWithAggregationInput = {
   imageUrl?: Prisma.SortOrder
   district?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  vaccinated?: Prisma.SortOrder
+  neutered?: Prisma.SortOrder
   postedById?: Prisma.SortOrder
   foundAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -381,6 +403,8 @@ export type PetScalarWhereWithAggregatesInput = {
   imageUrl?: Prisma.StringWithAggregatesFilter<"Pet"> | string
   district?: Prisma.StringWithAggregatesFilter<"Pet"> | string
   status?: Prisma.EnumPetStatusWithAggregatesFilter<"Pet"> | $Enums.PetStatus
+  vaccinated?: Prisma.BoolWithAggregatesFilter<"Pet"> | boolean
+  neutered?: Prisma.BoolWithAggregatesFilter<"Pet"> | boolean
   postedById?: Prisma.StringWithAggregatesFilter<"Pet"> | string
   foundAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Pet"> | Date | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Pet"> | Date | string
@@ -399,6 +423,8 @@ export type PetCreateInput = {
   imageUrl: string
   district: string
   status?: $Enums.PetStatus
+  vaccinated?: boolean
+  neutered?: boolean
   foundAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -418,6 +444,8 @@ export type PetUncheckedCreateInput = {
   imageUrl: string
   district: string
   status?: $Enums.PetStatus
+  vaccinated?: boolean
+  neutered?: boolean
   postedById: string
   foundAt?: Date | string | null
   createdAt?: Date | string
@@ -437,6 +465,8 @@ export type PetUpdateInput = {
   imageUrl?: Prisma.StringFieldUpdateOperationsInput | string
   district?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumPetStatusFieldUpdateOperationsInput | $Enums.PetStatus
+  vaccinated?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  neutered?: Prisma.BoolFieldUpdateOperationsInput | boolean
   foundAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -456,6 +486,8 @@ export type PetUncheckedUpdateInput = {
   imageUrl?: Prisma.StringFieldUpdateOperationsInput | string
   district?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumPetStatusFieldUpdateOperationsInput | $Enums.PetStatus
+  vaccinated?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  neutered?: Prisma.BoolFieldUpdateOperationsInput | boolean
   postedById?: Prisma.StringFieldUpdateOperationsInput | string
   foundAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -475,6 +507,8 @@ export type PetCreateManyInput = {
   imageUrl: string
   district: string
   status?: $Enums.PetStatus
+  vaccinated?: boolean
+  neutered?: boolean
   postedById: string
   foundAt?: Date | string | null
   createdAt?: Date | string
@@ -493,6 +527,8 @@ export type PetUpdateManyMutationInput = {
   imageUrl?: Prisma.StringFieldUpdateOperationsInput | string
   district?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumPetStatusFieldUpdateOperationsInput | $Enums.PetStatus
+  vaccinated?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  neutered?: Prisma.BoolFieldUpdateOperationsInput | boolean
   foundAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -510,6 +546,8 @@ export type PetUncheckedUpdateManyInput = {
   imageUrl?: Prisma.StringFieldUpdateOperationsInput | string
   district?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumPetStatusFieldUpdateOperationsInput | $Enums.PetStatus
+  vaccinated?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  neutered?: Prisma.BoolFieldUpdateOperationsInput | boolean
   postedById?: Prisma.StringFieldUpdateOperationsInput | string
   foundAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -538,6 +576,8 @@ export type PetCountOrderByAggregateInput = {
   imageUrl?: Prisma.SortOrder
   district?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  vaccinated?: Prisma.SortOrder
+  neutered?: Prisma.SortOrder
   postedById?: Prisma.SortOrder
   foundAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -560,6 +600,8 @@ export type PetMaxOrderByAggregateInput = {
   imageUrl?: Prisma.SortOrder
   district?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  vaccinated?: Prisma.SortOrder
+  neutered?: Prisma.SortOrder
   postedById?: Prisma.SortOrder
   foundAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -578,6 +620,8 @@ export type PetMinOrderByAggregateInput = {
   imageUrl?: Prisma.SortOrder
   district?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  vaccinated?: Prisma.SortOrder
+  neutered?: Prisma.SortOrder
   postedById?: Prisma.SortOrder
   foundAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -663,6 +707,10 @@ export type EnumPetStatusFieldUpdateOperationsInput = {
   set?: $Enums.PetStatus
 }
 
+export type BoolFieldUpdateOperationsInput = {
+  set?: boolean
+}
+
 export type NullableDateTimeFieldUpdateOperationsInput = {
   set?: Date | string | null
 }
@@ -693,6 +741,8 @@ export type PetCreateWithoutPostedByInput = {
   imageUrl: string
   district: string
   status?: $Enums.PetStatus
+  vaccinated?: boolean
+  neutered?: boolean
   foundAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -711,6 +761,8 @@ export type PetUncheckedCreateWithoutPostedByInput = {
   imageUrl: string
   district: string
   status?: $Enums.PetStatus
+  vaccinated?: boolean
+  neutered?: boolean
   foundAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -758,6 +810,8 @@ export type PetScalarWhereInput = {
   imageUrl?: Prisma.StringFilter<"Pet"> | string
   district?: Prisma.StringFilter<"Pet"> | string
   status?: Prisma.EnumPetStatusFilter<"Pet"> | $Enums.PetStatus
+  vaccinated?: Prisma.BoolFilter<"Pet"> | boolean
+  neutered?: Prisma.BoolFilter<"Pet"> | boolean
   postedById?: Prisma.StringFilter<"Pet"> | string
   foundAt?: Prisma.DateTimeNullableFilter<"Pet"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Pet"> | Date | string
@@ -776,6 +830,8 @@ export type PetCreateWithoutRequestsInput = {
   imageUrl: string
   district: string
   status?: $Enums.PetStatus
+  vaccinated?: boolean
+  neutered?: boolean
   foundAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -794,6 +850,8 @@ export type PetUncheckedCreateWithoutRequestsInput = {
   imageUrl: string
   district: string
   status?: $Enums.PetStatus
+  vaccinated?: boolean
+  neutered?: boolean
   postedById: string
   foundAt?: Date | string | null
   createdAt?: Date | string
@@ -828,6 +886,8 @@ export type PetUpdateWithoutRequestsInput = {
   imageUrl?: Prisma.StringFieldUpdateOperationsInput | string
   district?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumPetStatusFieldUpdateOperationsInput | $Enums.PetStatus
+  vaccinated?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  neutered?: Prisma.BoolFieldUpdateOperationsInput | boolean
   foundAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -846,6 +906,8 @@ export type PetUncheckedUpdateWithoutRequestsInput = {
   imageUrl?: Prisma.StringFieldUpdateOperationsInput | string
   district?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumPetStatusFieldUpdateOperationsInput | $Enums.PetStatus
+  vaccinated?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  neutered?: Prisma.BoolFieldUpdateOperationsInput | boolean
   postedById?: Prisma.StringFieldUpdateOperationsInput | string
   foundAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -864,6 +926,8 @@ export type PetCreateManyPostedByInput = {
   imageUrl: string
   district: string
   status?: $Enums.PetStatus
+  vaccinated?: boolean
+  neutered?: boolean
   foundAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -881,6 +945,8 @@ export type PetUpdateWithoutPostedByInput = {
   imageUrl?: Prisma.StringFieldUpdateOperationsInput | string
   district?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumPetStatusFieldUpdateOperationsInput | $Enums.PetStatus
+  vaccinated?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  neutered?: Prisma.BoolFieldUpdateOperationsInput | boolean
   foundAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -899,6 +965,8 @@ export type PetUncheckedUpdateWithoutPostedByInput = {
   imageUrl?: Prisma.StringFieldUpdateOperationsInput | string
   district?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumPetStatusFieldUpdateOperationsInput | $Enums.PetStatus
+  vaccinated?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  neutered?: Prisma.BoolFieldUpdateOperationsInput | boolean
   foundAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -917,6 +985,8 @@ export type PetUncheckedUpdateManyWithoutPostedByInput = {
   imageUrl?: Prisma.StringFieldUpdateOperationsInput | string
   district?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumPetStatusFieldUpdateOperationsInput | $Enums.PetStatus
+  vaccinated?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  neutered?: Prisma.BoolFieldUpdateOperationsInput | boolean
   foundAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -965,6 +1035,8 @@ export type PetSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = ru
   imageUrl?: boolean
   district?: boolean
   status?: boolean
+  vaccinated?: boolean
+  neutered?: boolean
   postedById?: boolean
   foundAt?: boolean
   createdAt?: boolean
@@ -986,6 +1058,8 @@ export type PetSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extension
   imageUrl?: boolean
   district?: boolean
   status?: boolean
+  vaccinated?: boolean
+  neutered?: boolean
   postedById?: boolean
   foundAt?: boolean
   createdAt?: boolean
@@ -1005,6 +1079,8 @@ export type PetSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extension
   imageUrl?: boolean
   district?: boolean
   status?: boolean
+  vaccinated?: boolean
+  neutered?: boolean
   postedById?: boolean
   foundAt?: boolean
   createdAt?: boolean
@@ -1024,13 +1100,15 @@ export type PetSelectScalar = {
   imageUrl?: boolean
   district?: boolean
   status?: boolean
+  vaccinated?: boolean
+  neutered?: boolean
   postedById?: boolean
   foundAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type PetOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "species" | "breed" | "gender" | "ageValue" | "ageUnit" | "description" | "imageUrl" | "district" | "status" | "postedById" | "foundAt" | "createdAt" | "updatedAt", ExtArgs["result"]["pet"]>
+export type PetOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "species" | "breed" | "gender" | "ageValue" | "ageUnit" | "description" | "imageUrl" | "district" | "status" | "vaccinated" | "neutered" | "postedById" | "foundAt" | "createdAt" | "updatedAt", ExtArgs["result"]["pet"]>
 export type PetInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   postedBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   requests?: boolean | Prisma.Pet$requestsArgs<ExtArgs>
@@ -1061,6 +1139,8 @@ export type $PetPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
     imageUrl: string
     district: string
     status: $Enums.PetStatus
+    vaccinated: boolean
+    neutered: boolean
     postedById: string
     foundAt: Date | null
     createdAt: Date
@@ -1501,6 +1581,8 @@ export interface PetFieldRefs {
   readonly imageUrl: Prisma.FieldRef<"Pet", 'String'>
   readonly district: Prisma.FieldRef<"Pet", 'String'>
   readonly status: Prisma.FieldRef<"Pet", 'PetStatus'>
+  readonly vaccinated: Prisma.FieldRef<"Pet", 'Boolean'>
+  readonly neutered: Prisma.FieldRef<"Pet", 'Boolean'>
   readonly postedById: Prisma.FieldRef<"Pet", 'String'>
   readonly foundAt: Prisma.FieldRef<"Pet", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"Pet", 'DateTime'>
